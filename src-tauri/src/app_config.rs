@@ -196,7 +196,7 @@ pub struct InstalledSkill {
     pub updated_at: i64,
 }
 
-/// 未管理的 Skill（在应用目录中发现但未被 CC Switch 管理）
+/// 未管理的 Skill（在应用目录中发现但未被 CC Viewer 管理）
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct UnmanagedSkill {

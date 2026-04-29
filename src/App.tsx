@@ -27,6 +27,7 @@ import {
   Shield,
   Cpu,
   LayoutDashboard,
+  Eye,
 } from "lucide-react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import type { Provider, VisibleApps } from "@/types";
@@ -88,6 +89,7 @@ import ToolsPanel from "@/components/openclaw/ToolsPanel";
 import AgentsDefaultsPanel from "@/components/openclaw/AgentsDefaultsPanel";
 import OpenClawHealthBanner from "@/components/openclaw/OpenClawHealthBanner";
 import HermesMemoryPanel from "@/components/hermes/HermesMemoryPanel";
+import { CcViewerPage } from "@/components/ccviewer/CcViewerPage";
 
 type View =
   | "providers"
@@ -103,7 +105,8 @@ type View =
   | "openclawEnv"
   | "openclawTools"
   | "openclawAgents"
-  | "hermesMemory";
+  | "hermesMemory"
+  | "ccviewer";
 
 interface WebDavSyncStatusUpdatedPayload {
   source?: string;
@@ -148,6 +151,7 @@ const VALID_VIEWS: View[] = [
   "openclawTools",
   "openclawAgents",
   "hermesMemory",
+  "ccviewer",
 ];
 
 const getInitialView = (): View => {
@@ -955,6 +959,8 @@ function App() {
           return <ToolsPanel />;
         case "openclawAgents":
           return <AgentsDefaultsPanel />;
+        case "ccviewer":
+          return <CcViewerPage />;
         default:
           return (
             <div className="px-6 flex flex-col flex-1 min-h-0 overflow-hidden">
@@ -1181,7 +1187,7 @@ function App() {
               <div className="flex items-center gap-2">
                 <div className="relative inline-flex items-center">
                   <a
-                    href="https://github.com/farion1231/cc-switch"
+                    href="https://github.com/farion1231/cc-viewer"
                     target="_blank"
                     rel="noreferrer"
                     className={cn(
@@ -1191,7 +1197,7 @@ function App() {
                         : "text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300",
                     )}
                   >
-                    CC Switch
+                    ccViewer
                   </a>
                 </div>
                 <Button
@@ -1519,6 +1525,15 @@ function App() {
                                 title={t("mcp.title")}
                               >
                                 <McpIcon size={16} />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setCurrentView("ccviewer")}
+                                className="text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5 w-8 px-2"
+                                title="ccViewer - Claude Code 配置查看器"
+                              >
+                                <Eye className="w-4 h-4" />
                               </Button>
                             </>
                           )}

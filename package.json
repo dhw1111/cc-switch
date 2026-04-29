@@ -1,7 +1,7 @@
 {
-  "name": "cc-switch",
-  "version": "3.14.1",
-  "description": "All-in-One Assistant for Claude Code, Codex & Gemini CLI",
+  "name": "ccviewer",
+  "version": "1.0.0",
+  "description": "Claude Code Configuration Viewer and Analyzer",
   "type": "module",
   "scripts": {
     "dev": "pnpm tauri dev",
