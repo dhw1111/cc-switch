@@ -22,6 +22,7 @@ import {
   CheckCircle,
   AlertTriangle,
   Keyboard,
+  Code,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,9 +41,30 @@ import {
   type FileNode,
   type GitHubRelease,
 } from "@/lib/api/ccviewer";
+import {
+  getHermesDirTree,
+  getHermesConfig,
+  getHermesMcpConfig,
+  getHermesMemory,
+  getHermesModelConfig,
+  getHermesMemoryLimits,
+  readHermesFile,
+} from "@/lib/api/viewer/hermes";
+import {
+  getOpenCodeDirTree,
+  getOpenCodeMcpConfig,
+  readOpenCodeFile,
+} from "@/lib/api/viewer/opencode";
+import {
+  getCodexDirTree,
+  getCodexMcpConfig,
+  getCodexSessions,
+  readCodexFile,
+} from "@/lib/api/viewer/codex";
 import { CommandLearning } from "./CommandLearning";
 
 type TabId = "tree" | "settings" | "mcp" | "skills" | "plugins" | "commands" | "commandLearning";
+type AppId = "claude" | "hermes" | "opencode" | "codex";
 
 const TAB_KEYS: Record<string, TabId> = {
   "1": "tree",
@@ -54,12 +76,20 @@ const TAB_KEYS: Record<string, TabId> = {
   "7": "commandLearning",
 };
 
+const APP_KEYS: Record<string, AppId> = {
+  "q": "claude",
+  "w": "hermes",
+  "e": "opencode",
+  "r": "codex",
+};
+
 /**
  * ccViewer - Claude Code 配置查看器
  * 专注于 Claude Code 自身配置文件的分析和展示
  */
 export function CcViewerPage() {
   const [activeTab, setActiveTab] = useState<TabId>("tree");
+  const [activeApp, setActiveApp] = useState<AppId>("claude");
   const [claudeDir, setClaudeDir] = useState<string>("");
   const [version, setVersion] = useState<string>("");
   const [latestVersion, setLatestVersion] = useState<string>("");
@@ -110,6 +140,12 @@ export function CcViewerPage() {
         return;
       }
 
+      // Q/W/E/R 切换应用
+      if (APP_KEYS[e.key.toLowerCase()]) {
+        setActiveApp(APP_KEYS[e.key.toLowerCase()]);
+        return;
+      }
+
       // R 键刷新
       if (e.key === "r" || e.key === "R") {
         loadBasicInfo();
@@ -142,6 +178,13 @@ export function CcViewerPage() {
     { id: "commandLearning", label: "命令学习", icon: <Book className="h-4 w-4" /> },
   ];
 
+  const apps: { id: AppId; label: string; icon: React.ReactNode }[] = [
+    { id: "claude", label: "Claude Code", icon: <Terminal className="h-4 w-4" /> },
+    { id: "hermes", label: "Hermes", icon: <Book className="h-4 w-4" /> },
+    { id: "opencode", label: "OpenCode", icon: <Code className="h-4 w-4" /> },
+    { id: "codex", label: "Codex", icon: <Database className="h-4 w-4" /> },
+  ];
+
   return (
     <div className="px-6 py-4 flex flex-col flex-1 min-h-0 overflow-hidden bg-background/50">
       {/* 头部信息 */}
@@ -149,11 +192,11 @@ export function CcViewerPage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">ccViewer</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Claude Code 配置分析器
+            多应用配置分析器
           </p>
         </div>
         <div className="flex items-center gap-4 text-sm">
-          {version && (
+          {activeApp === "claude" && version && (
             <span className="text-muted-foreground">
               当前版本: <span className="font-mono text-foreground">{version}</span>
             </span>
@@ -198,6 +241,15 @@ export function CcViewerPage() {
             </div>
             <div className="space-y-3 text-sm">
               <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">切换应用</span>
+                <div className="flex gap-1">
+                  <kbd className="px-2 py-1 bg-muted rounded text-xs font-mono">Q</kbd>
+                  <kbd className="px-2 py-1 bg-muted rounded text-xs font-mono">W</kbd>
+                  <kbd className="px-2 py-1 bg-muted rounded text-xs font-mono">E</kbd>
+                  <kbd className="px-2 py-1 bg-muted rounded text-xs font-mono">R</kbd>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">切换标签页</span>
                 <kbd className="px-2 py-1 bg-muted rounded text-xs font-mono">1-7</kbd>
               </div>
@@ -217,6 +269,24 @@ export function CcViewerPage() {
           </div>
         </div>
       )}
+
+      {/* 应用选择器 */}
+      <div className="flex gap-2 mb-4 p-1 bg-muted/50 rounded-lg w-fit">
+        {apps.map((app) => (
+          <button
+            key={app.id}
+            onClick={() => setActiveApp(app.id)}
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              activeApp === app.id
+                ? "bg-background shadow-sm text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {app.icon}
+            {app.label}
+          </button>
+        ))}
+      </div>
 
       {/* 标签页 */}
       <div className="flex gap-1 mb-4 border-b">
@@ -255,7 +325,8 @@ export function CcViewerPage() {
         ) : (
           <TabContent
             activeTab={activeTab}
-            claudeDir={claudeDir}
+            activeApp={activeApp}
+            appDir={claudeDir}
             onSwitchToCommands={() => {
               setActiveTab("commands");
             }}
@@ -268,24 +339,25 @@ export function CcViewerPage() {
 
 interface TabContentProps {
   activeTab: TabId;
-  claudeDir: string;
+  activeApp: AppId;
+  appDir: string;
   onSwitchToCommands: (cmd: string) => void;
 }
 
-function TabContent({ activeTab, claudeDir, onSwitchToCommands }: TabContentProps) {
+function TabContent({ activeTab, activeApp, appDir, onSwitchToCommands }: TabContentProps) {
   switch (activeTab) {
     case "tree":
-      return <DirTreeView claudeDir={claudeDir} />;
+      return <DirTreeView appId={activeApp} appDir={appDir} />;
     case "settings":
-      return <SettingsView />;
+      return <SettingsView appId={activeApp} />;
     case "mcp":
-      return <McpView />;
+      return <McpView appId={activeApp} />;
     case "skills":
-      return <SkillsView />;
+      return <SkillsView appId={activeApp} />;
     case "plugins":
-      return <PluginsView />;
+      return <PluginsView appId={activeApp} />;
     case "commands":
-      return <CommandsView />;
+      return <CommandsView appId={activeApp} />;
     case "commandLearning":
       return <CommandLearning onExecuteCommand={onSwitchToCommands} />;
     default:
@@ -294,7 +366,7 @@ function TabContent({ activeTab, claudeDir, onSwitchToCommands }: TabContentProp
 }
 
 /* ==================== 目录树 ==================== */
-function DirTreeView({ claudeDir }: { claudeDir: string }) {
+function DirTreeView({ appId, appDir }: { appId: AppId; appDir: string }) {
   const [tree, setTree] = useState<FileNode | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -305,12 +377,26 @@ function DirTreeView({ claudeDir }: { claudeDir: string }) {
 
   useEffect(() => {
     loadTree();
-  }, [claudeDir]);
+  }, [appId, appDir]);
 
   const loadTree = async () => {
     setLoading(true);
     try {
-      const data = await getClaudeDirTree(4);
+      let data: FileNode;
+      switch (appId) {
+        case "claude":
+          data = await getClaudeDirTree(4);
+          break;
+        case "hermes":
+          data = await getHermesDirTree(4);
+          break;
+        case "opencode":
+          data = await getOpenCodeDirTree(4);
+          break;
+        case "codex":
+          data = await getCodexDirTree(4);
+          break;
+      }
       setTree(data);
       if (data.path) {
         setExpandedPaths(new Set([data.path]));

@@ -32,6 +32,8 @@ mod settings;
 mod store;
 
 mod tray;
+
+pub mod viewer;
 mod usage_script;
 
 pub use app_config::{AppType, InstalledSkill, McpApps, McpServer, MultiAppConfig, SkillApps};
@@ -1337,7 +1339,30 @@ pub fn run() {
             ccviewer::commands::ccviewer_get_mcp_config,
             ccviewer::commands::get_settings_config,
             ccviewer::commands::get_settings_local_config,
-            ccviewer::commands::check_claude_latest_version,
+ccviewer::commands::check_claude_latest_version,
+            // Hermes Viewer commands
+            viewer::hermes::commands::viewer_get_hermes_dir,
+            viewer::hermes::commands::viewer_get_hermes_dir_tree,
+            viewer::hermes::commands::viewer_hermes_read_file,
+            viewer::hermes::commands::viewer_get_hermes_config,
+            viewer::hermes::commands::viewer_get_hermes_mcp_config,
+            viewer::hermes::commands::viewer_get_hermes_memory,
+            viewer::hermes::commands::viewer_write_hermes_memory,
+            viewer::hermes::commands::viewer_get_hermes_model_config,
+            viewer::hermes::commands::viewer_get_hermes_memory_limits,
+            viewer::hermes::commands::viewer_check_hermes_version,
+            // OpenCode Viewer commands
+            viewer::opencode::commands::viewer_get_opencode_dir,
+            viewer::opencode::commands::viewer_get_opencode_dir_tree,
+            viewer::opencode::commands::viewer_opencode_read_file,
+            viewer::opencode::commands::viewer_get_opencode_mcp_config,
+            viewer::opencode::commands::viewer_check_opencode_version,
+            // Codex Viewer commands
+            viewer::codex::commands::viewer_get_codex_dir,
+            viewer::codex::commands::viewer_get_codex_dir_tree,
+            viewer::codex::commands::viewer_codex_read_file,
+            viewer::codex::commands::viewer_get_codex_mcp_config,
+            viewer::codex::commands::viewer_get_codex_sessions,
         ]);
 
     let app = builder
