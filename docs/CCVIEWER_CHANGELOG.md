@@ -7,7 +7,7 @@ CC Viewer 是基于 CC Switch 的二开版本，主要将品牌从 "CC Switch" �
 ## 基本信息
 
 - **原项目**: farion1231/cc-switch
-- **用户 Fork**: dhw1111/cc-switch
+- **用户 Fork**: [用户名]/cc-switch
 - **产品名称**: CC Viewer
 - **产品标识符**: com.ccviewer.desktop
 - **Deep Link 协议**: ccviewer://
@@ -15,7 +15,7 @@ CC Viewer 是基于 CC Switch 的二开版本，主要将品牌从 "CC Switch" �
 ## Git 仓库配置
 
 ```
-origin  = https://github.com/dhw1111/cc-switch.git (用户 Fork)
+origin  = https://github.com/[用户名]/cc-switch.git (用户 Fork)
 upstream = https://github.com/farion1231/cc-switch.git (官方)
 ```
 
@@ -98,7 +98,7 @@ docs/
 
 ## 分支说明
 
-- **main**: 稳定分支，与 dhw1111/cc-switch main 同步
+- **main**: 稳定分支，与 [用户名]/cc-switch main 同步
 - **ccviewer-dev**: 开发分支，用于新功能开发
 
 ## 未来更新指南
@@ -124,7 +124,7 @@ docs/
 
 ## 相关链接
 
-- 用户仓库: https://github.com/dhw1111/cc-switch
+- 用户仓库: https://github.com/[用户名]/cc-switch
 - 官方仓库: https://github.com/farion1231/cc-switch
 - GitHub MCP: https://github.com/modelcontextprotocol/servers/tree/main/src/github
 

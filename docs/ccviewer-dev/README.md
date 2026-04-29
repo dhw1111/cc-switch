@@ -14,21 +14,27 @@
 
 ## 源码位置
 
-- 前端: `/Users/dhw/GolandProjects/cc-switch/src/`
-- 后端 (Rust): `/Users/dhw/GolandProjects/cc-switch/src-tauri/src/`
-- 图标: `/Users/dhw/GolandProjects/cc-switch/src-tauri/icons/`
+- 前端: `<项目目录>/src/`
+- 后端 (Rust): `<项目目录>/src-tauri/src/`
+- 图标: `<项目目录>/src-tauri/icons/`
 
 ## 构建命令
 
 ```bash
+# 克隆仓库
+git clone https://github.com/[用户名]/cc-switch.git
+cd cc-switch
+
+# 安装依赖
+pnpm install
+
 # 开发模式
-cd /Users/dhw/GolandProjects/cc-switch
 pnpm tauri dev
 
 # 生产构建
 pnpm tauri build
 
-# 安装到本地 Applications
+# 安装到本地 Applications (macOS)
 rm -rf /Applications/ccViewer.app
 cp -R src-tauri/target/release/bundle/macos/ccViewer.app /Applications/
 ```
@@ -93,6 +99,7 @@ python3 -m venv /tmp/icon_venv
 /tmp/icon_venv/bin/pip install Pillow
 
 # 2. 使用 Pillow 生成所有尺寸的 PNG
+# 在项目根目录执行:
 /tmp/icon_venv/bin/python3 << 'EOF'
 from PIL import Image
 import os
@@ -119,15 +126,15 @@ for size, name in [(16,"16x16"), (32,"16x16@2x"), (32,"32x32"), (64,"32x32@2x"),
     src.resize((size, size), Image.LANCZOS).save(f"src-tauri/icons/icon.iconset/icon_{name}.png", "PNG")
 EOF
 
-# 3. 生成 icns
+# 3. 生成 icns (macOS)
 iconutil -c icns src-tauri/icons/icon.iconset -o src-tauri/icons/icon.icns
 
-# 4. 生成 ico (需要 png-to-ico npm 包)
+# 4. 生成 ico (Windows, 需要 png-to-ico npm 包)
 npm install -g png-to-ico
 /tmp/icon_venv/bin/python3 -c "from PIL import Image; Image.open('src-tauri/icons/icon_preview1.jpeg').convert('RGBA').resize((256,256), Image.LANCZOS).save('/tmp/256.png')"
 png-to-ico /tmp/256.png > src-tauri/icons/icon.ico
 
-# 5. 更新 app-icon.png
+# 5. 更新前端 app-icon.png
 sips -s format png --out src/assets/icons/app-icon.png src-tauri/icons/icon.png
 ```
 
@@ -149,7 +156,6 @@ src-tauri/src/
 └── ccviewer/
     ├── mod.rs               # 模块定义
     └── commands.rs          # Tauri 命令 (12个)
-
 ```
 
 ### Tauri 命令列表
@@ -179,5 +185,5 @@ src-tauri/src/
 ## 下次开发前检查
 
 1. 运行 `git status` 查看当前状态
-2. 检查 docs/ccviewer-dev/README.md 是否存在
-3. 阅读本文档了解已完成的更改
+2. 检查 docs/ 目录下的架构文档
+3. 阅读 CCVIEWER_CHANGELOG.md 了解已完成的更改

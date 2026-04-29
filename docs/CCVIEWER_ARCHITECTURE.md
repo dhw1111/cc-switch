@@ -256,7 +256,7 @@ src-tauri/src/ccviewer/commands.rs 中的 execute_claude_command 函数太长了
 git fetch upstream
 
 # 2. 进入项目目录
-cd /Users/dhw/GolandProjects/cc-switch
+cd <项目目录>
 
 # 3. 开始 Claude Code 会话
 claude
@@ -288,7 +288,7 @@ claude
 
 #### 使用 Memory 记住上下文
 
-在 `~/.claude/projects/-Users-dhw-GolandProjects-cc-switch/memory/` 中保存重要决策:
+在 `~/.claude/projects/<项目路径>/memory/` 中保存重要决策:
 
 ```markdown
 # 架构决策: Provider 模块设计
@@ -531,10 +531,10 @@ RUST_LOG=debug pnpm tauri dev
 ### Q: 如何查看 Tauri 日志？
 ```bash
 # macOS
-tail -f ~/Library/Logs/com.ccviewer.desktop.log
+tail -f ~/Library/Logs/<应用名>.log
 
 # Windows
-type %APPDATA%\CCViewer\logs\*.log
+type %APPDATA%\<应用名>\logs\*.log
 ```
 
 ### Q: 如何添加新的 Tauri 命令？
