@@ -127,3 +127,7 @@ docs/
 - 用户仓库: https://github.com/dhw1111/cc-switch
 - 官方仓库: https://github.com/farion1231/cc-switch
 - GitHub MCP: https://github.com/modelcontextprotocol/servers/tree/main/src/github
+
+## 其他文档
+
+- [架构与开发指南](./CCVIEWER_ARCHITECTURE.md) - 项目架构、开发流程、二开指南
